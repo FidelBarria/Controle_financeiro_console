@@ -2,7 +2,9 @@
 require 'tty-box'
 require 'tty-prompt'
 require 'tty-table'
+require_relative 'tela_dashboard'
 require_relative 'tela_cadastro'
+
 
 class TelaLogin
 
@@ -42,7 +44,7 @@ class TelaLogin
     end
 
     def self.logar
-         puts "Logar não implementado."          
+         TelaDashboard.header        
     end
 
     def self.cadastrar

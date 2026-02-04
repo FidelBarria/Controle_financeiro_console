@@ -1,0 +1,9 @@
+require 'tty-box'
+
+class TelaDashboard
+  def self.header
+    box = TTY::box.frame("Dashboard: ", width: 50, align: :center, padding: 1)
+    puts box
+  end
+  
+end

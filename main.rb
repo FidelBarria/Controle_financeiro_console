@@ -1,4 +1,5 @@
 require_relative 'ui/tela_login'
+require_relative 'ui/tela_dashboard'
 require_relative 'infra/controle_financeiro_db'
 
 
