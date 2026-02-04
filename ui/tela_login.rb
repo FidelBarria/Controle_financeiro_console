@@ -2,9 +2,6 @@
 require 'tty-box'
 require 'tty-prompt'
 require 'tty-table'
-require_relative 'tela_dashboard'
-require_relative 'tela_cadastro'
-
 
 class TelaLogin
 
@@ -20,16 +17,15 @@ class TelaLogin
         header
         prompt = TTY::Prompt.new
         loop do 
-          
-          opcao = prompt.select("Escolha uma das opções a baixo.") do |menu|
-            menu.choice "Logar.", :logar    
-            menu.choice "Cadastrar.", :cadastrar 
-            menu.choice "Sair.", :sair                          
-          end  
-            self.executa_opcao(opcao)
+              opcao = prompt.select("Escolha uma das opções a baixo.") do |menu|
+              menu.choice "Logar.", :logar    
+              menu.choice "Cadastrar.", :cadastrar 
+              menu.choice "Sair.", :sair               
+          end    
+          self.executa_opcao(opcao)
         end
-
     end
+
     private
 
     def self.executa_opcao(opcao)
@@ -44,11 +40,11 @@ class TelaLogin
     end
 
     def self.logar
-         TelaDashboard.header        
+         TelaDashboard.logar       
     end
 
     def self.cadastrar
-          TelaCadastro.cadastra_usuario
+          TelaCadastro.menu
     end
 
     def self.fechar_programa
