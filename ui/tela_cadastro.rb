@@ -7,7 +7,7 @@ require_relative '../ui/tela_login'
 
 class TelaCadastro
     def self.header
-      box = TTY::Box.frame("Cadastrar Usuario.", width: 150, align: :center, padding: 1)
+      box = TTY::Box.frame("Cadastrar Usuario.", width: 100, align: :center, padding: 1)
       puts box
     end
 
@@ -40,8 +40,7 @@ class TelaCadastro
       when :voltar
         voltar
       when :sair
-        puts "Contole Financeiro fechado."
-        exit
+        sair
       end
     end
 
@@ -59,8 +58,8 @@ class TelaCadastro
         return
       end
 
-      table = TTY::Table.new(['is', 'nome', 'email', 'senha'], 
-      lista_usuario.map{|u| [u['id'], u['nome'], u['email'], u['senha']]})
+      table = TTY::Table.new(['is', 'nome', 'usuario', 'email', 'senha'], 
+      lista_usuario.map{|u| [u['id'], u['nome'], u['usuario'], u['email'], u['senha']]})
       puts table.render(:unicode)
     end
 
@@ -81,11 +80,18 @@ class TelaCadastro
       system("clear") || system("cls")
       header
       prompt = TTY::Prompt.new
+      usuario = prompt.ask(message = "Usuario: ")
       nome = prompt.ask(message = "Nome: ")
       email = prompt.ask(message = "Email: ")
       senha = prompt.mask(message = "Senha: ")
       @usuario_service = UsuarioService.new
-      @usuario_service.cadastra_usuario(nome: nome, email: email, senha: senha)
+      @usuario_service.cadastra_usuario(nome: nome, email: email, senha: senha, usuario: usuario)
+    end
+
+    def self.sair
+      system("cls") || system('clear')
+      puts "Ate logo!!"
+      exit
     end
 end
 

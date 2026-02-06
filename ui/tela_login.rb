@@ -8,7 +8,7 @@ class TelaLogin
 
 
     def self.header
-        head = TTY::Box.frame("Controle Financeiro", width: 150, align: :center, padding: 1)
+        head = TTY::Box.frame("Controle Financeiro", width: 100, align: :center, padding: 1)
         puts head
     end
 
@@ -48,6 +48,8 @@ class TelaLogin
     end
 
     def self.fechar_programa
+          system("cls") || system('clear')
+          puts "Ate logo!!"
             exit
     end
 end

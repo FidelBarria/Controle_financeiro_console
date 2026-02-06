@@ -7,7 +7,7 @@ class UsuarioRepository
     end
 
     def salvar_usuario(usuario)
-      @db.execute("INSERT INTO usuario (nome, email, senha) values (?, ?, ?)", [usuario.nome, usuario.email, usuario.senha])
+      @db.execute("INSERT INTO usuario (nome, email, senha, usuario) values (?, ?, ?, ?)", [usuario.nome, usuario.email, usuario.senha, usuario.usuario])
     end
 
     def logar_usuario(usuario)

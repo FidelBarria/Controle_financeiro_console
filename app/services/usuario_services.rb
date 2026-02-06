@@ -10,29 +10,21 @@ class UsuarioService
       @usuario_repository.pesquisar_usuario
     end
 
-    def cadastra_usuario(nome: , email: , senha:)
-      usuario = Usuario.new(
-                 nome: nome,
-                 email: email,
-                 senha: senha
-                )
+    def cadastra_usuario(nome: , email: , senha:, usuario:)
+      usuario = Usuario.new(nome: nome, email: email, senha: senha, usuario: usuario)
       @usuario_repository.salvar_usuario(usuario)
     end
 
     def editar_usuario(id, nome:, email:, senha:)
-      usuario = Usuario.new(nome: nome, email: email, senha: senha)
+      usuario = Usuario.new(nome: nome, email: email, senha: senha, usuario: usuario)
       @usuario_repository.editar_usuario(usuario, id)
     end
 
     def logar_usuario(nome:, senha:)
-      usuario = Usuario.new(
-        nome: nome,
-        email: "",
-        senha: senha
-      )
+      usuario = Usuario.new( nome: nome, email: "", senha: senha, usuario: "")
       logado = @usuario_repository.logar_usuario(usuario)
       if logado then 
-        TelaDashboard.menu
+        true
       end
     end
 end

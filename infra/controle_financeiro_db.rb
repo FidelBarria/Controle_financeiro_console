@@ -1,28 +1,31 @@
 require 'sqlite3'
 
 class ControleFinanceiroDb
-
   def self.conexao
-    @db ||= SQLite3::Database.new("db/controle_financeiro.db").tap do |db|
-          db.results_as_hash = true
-          db.busy_timeout = 3000 # 🔥 importante
+    SQLite3::Database.open("db/controle_financeiro.db").tap do |db|
+      db.results_as_hash = true
+      db.busy_timeout = 3000
     end
   end
 
   def self.atualiza_banco
-  db = SQLite3::Database.open ("db/controle_financeiro.db")
-  db.results_as_hash = true
+    db = conexao
+    db.execute <<-SQL 
+      CREATE TABLE IF NOT EXISTS usuario (
+        id INTEGER PRIMARY KEY,
+        nome TEXT,
+        email TEXT,
+        senha TEXT
+      ); 
+      SQL
+      puts "Banco atualizado."
+  end
 
-  db.execute <<-SQL 
-    CREATE TABLE IF NOT EXISTS usuario (
-      id INTEGER PRIMARY KEY,
-      nome TEXT,
-      email TEXT,
-      senha TEXT
-    );
-  SQL
-  db.close
-    puts "Banco atualizado."
+  def self.alterar_usuario
+        db = conexao
+        db.execute <<-SQL
+                  ALTER TABLE IF NOT EXISTS usuario ADD usuario TEXT
+        SQL
   end
 
 end

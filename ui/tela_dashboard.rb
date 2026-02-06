@@ -2,7 +2,7 @@ require 'tty-box'
 
 class TelaDashboard
   def self.header
-    box = TTY::Box.frame("Dashboard: ", width: 50, align: :center, padding: 1)
+    box = TTY::Box.frame("Dashboard: ", width: 100, align: :center, padding: 1)
     puts box
   end
 
@@ -11,7 +11,10 @@ class TelaDashboard
     nome = prompt.ask("Usuario: ")
     senha = prompt.mask("Senha:")
     @usuario_service = UsuarioService.new
-    @usuario_service.logar_usuario(nome: nome, senha: senha)
+    if @usuario_service.logar_usuario(nome: nome, senha: senha) 
+            menu
+    end
+
   end
 
   def self.menu
