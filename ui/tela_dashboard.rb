@@ -52,9 +52,12 @@ class TelaDashboard
     when :lista_transacao
       lista_transacao
     when :adiciona_transacao
-      
+      adiciona_transacao
     when :adiciona_categoria
-      
   end
+
+  def adiciona_transacao
+    
+  ends
 
 end
