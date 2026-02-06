@@ -11,11 +11,15 @@ class UsuarioService
     end
 
     def cadastra_usuario(nome: , email: , senha:, usuario:)
-      usuario = Usuario.new(nome: nome, email: email, senha: senha, usuario: usuario)
-      @usuario_repository.salvar_usuario(usuario)
+      if @usuario_repository.usuario_existe?(usuario)
+        raise "Usuario ja cadastrado com esse usuario." 
+      else
+        usuario = Usuario.new(nome: nome, email: email, senha: senha, usuario: usuario)
+        @usuario_repository.salvar_usuario(usuario)
+      end
     end
 
-    def editar_usuario(id, nome:, email:, senha:)
+    def editar_usuario(id, nome:, email:, senha:, usuario:)
       usuario = Usuario.new(nome: nome, email: email, senha: senha, usuario: usuario)
       @usuario_repository.editar_usuario(usuario, id)
     end

@@ -69,11 +69,12 @@ class TelaCadastro
       prompt = TTY::Prompt.new
       puts "Informe o ID do usuario e depois as informações que quer alterar."
       id = prompt.ask(message = "id: ")
+      usuario = prompt.ask(message = "Usuario: ")
       nome = prompt.ask(message = "nome: ")
       email = prompt.ask(message = "email: ")
       senha = prompt.ask(message = "senha: ")
       @usuario_service = UsuarioService.new
-      @usuario_service.editar_usuario(id, nome: nome, email: email, senha: senha)
+      @usuario_service.editar_usuario(id, nome: nome, email: email, senha: senha, usuario: usuario)
     end
 
     def self.cadastra_usuario
@@ -85,7 +86,13 @@ class TelaCadastro
       email = prompt.ask(message = "Email: ")
       senha = prompt.mask(message = "Senha: ")
       @usuario_service = UsuarioService.new
+      begin
       @usuario_service.cadastra_usuario(nome: nome, email: email, senha: senha, usuario: usuario)
+      prompt.ok("Usuario cadastrado com sucesso!!")
+      rescue RuntimeError => e
+        prompt.error(e.message)
+        prompt.keypress("Pressione qualquer tecla para continuar!!")
+      end
     end
 
     def self.sair
