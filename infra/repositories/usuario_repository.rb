@@ -11,10 +11,7 @@ class UsuarioRepository
     end
 
     def logar_usuario(usuario)
-     lista_usuario = @db.execute("SELECT * FROM usuario WHERE nome = ? AND senha = ?", [usuario.nome, usuario.senha])
-     if lista_usuario.any? then 
-      true
-     end
+     @db.get_first_row("SELECT id, nome, senha FROM usuario WHERE nome = ?", [usuario.nome])
     end
 
     def editar_usuario(usuario, id)

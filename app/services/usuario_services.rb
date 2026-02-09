@@ -25,10 +25,9 @@ class UsuarioService
     end
 
     def logar_usuario(nome:, senha:)
-      usuario = Usuario.new( nome: nome, email: "", senha: senha, usuario: "")
-      logado = @usuario_repository.logar_usuario(usuario)
-      if logado then 
-        true
-      end
+      dados = @usuario_repository.logar_usuario( Usuario.new(id: 0, nome: nome, email: "", senha: senha, usuario: ""))
+      return nil if dados.nil?
+      return nil unless dados["senha"] == senha
+      Usuario.new(id: dados["id"], nome: dados["nome"], email: ["email"], senha: ["senha"], usuario: ["usuario"])
     end
 end

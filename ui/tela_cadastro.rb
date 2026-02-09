@@ -58,7 +58,7 @@ class TelaCadastro
         return
       end
 
-      table = TTY::Table.new(['is', 'nome', 'usuario', 'email', 'senha'], 
+      table = TTY::Table.new(['id', 'nome', 'usuario', 'email', 'senha'], 
       lista_usuario.map{|u| [u['id'], u['nome'], u['usuario'], u['email'], u['senha']]})
       puts table.render(:unicode)
     end

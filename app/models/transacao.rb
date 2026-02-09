@@ -1,10 +1,8 @@
 class Transacoes
-  attr_accessor :nome, :valor, :data, :categoria, :usuario_id, :categoria_id
-  def initialize(nome:, valor:, data:, categoria:, usuario_id:, categoria_id:)
-    @nome = nome
+  attr_accessor :valor, :data, :categoria, :usuario_id, :categoria_id
+  def initialize( valor:, data:, usuario_id:, categoria_id:)
     @valor = valor
     @data = data
-    @categoria = categoria
     @usuario_id = usuario_id
     @categoria_id = categoria_id
   end
