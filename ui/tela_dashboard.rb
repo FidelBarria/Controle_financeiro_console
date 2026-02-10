@@ -1,4 +1,5 @@
 require 'tty-box'
+require 'date'
 
 class TelaDashboard
 
@@ -11,10 +12,19 @@ class TelaDashboard
   def self.caixa_saldos
     tamanho_tela = TTY::Screen.width
     box_largura = tamanho_tela/2
-    box_saldo = TTY::Box.frame("Saldo Total: R$ #{@saldo_total}", width: box_largura, align: :center, padding: 1)
-    box_despesa = TTY::Box.frame("Despesa Total: R$ #{@salto_despesa}", width: box_largura, align: :center, padding: 1)
-    puts box_saldo 
-    puts box_despesa 
+    hoje = Date.today
+    data_inicial = Date.new(hoje.year, hoje.month, 1)
+    data_final = Date.new(hoje.year, hoje.month, -1)
+    box_receita_total = TTY::Box.frame("Receita Total: R$ #{@saldo_receita}", width: box_largura, align: :center, padding: 1)
+    box_despesa_total = TTY::Box.frame("Despesa Total: R$ #{@saldo_despesa}", width: box_largura, align: :center, padding: 1)
+    box_saldo_mes = TTY::Box.frame("Saldo Total do mês #{data_inicial} a #{data_final}: R$ #{@saldo_total_mes}", width: box_largura, align: :center, padding: 1)
+    box_despesa_mes = TTY::Box.frame("Despesa Total do mês #{data_inicial} a #{data_final}: R$ #{@saldo_despesa_mes}", width: box_largura, align: :center, padding: 1)
+    box_saldo_total = TTY::Box.frame("Saldo Real: R$ #{@saldo_total}", width: box_largura, align: :center, padding: 1)
+    puts box_saldo_mes 
+    puts box_despesa_mes 
+    puts box_receita_total
+    puts box_despesa_total
+    puts box_saldo_total
     puts "\n"
   end
 
@@ -27,8 +37,11 @@ class TelaDashboard
     if usuario_logado
     system("cls") || system("clear")
     @id_usuario_logado = usuario_logado.id
-    somar_saldo(@id_usuario_logado)
-    somar_despesas(@id_usuario_logado)
+    somar_saldo_mes
+    somar_despesas_mes
+    somar_receita
+    somar_despesa
+    saldo_total
     header(@nome)
     caixa_saldos
     menu
@@ -44,7 +57,7 @@ class TelaDashboard
       menu.choice "Lista de transações.", :lista_transacao
       menu.choice "Adicionar transação.", :adiciona_transacao
       menu.choice "Adicionar categoria.", :adiciona_categoria
-      menu.choice "Sair.", :sair
+      menu.choice "Votar.", :voltar
     end
       executa_opcao(opcao)
     end
@@ -60,8 +73,8 @@ class TelaDashboard
       adiciona_transacao
     when :adiciona_categoria
       adiciona_categoria
-    when :sair
-      sair
+    when :voltar
+      voltar
     end
   end
 
@@ -74,8 +87,11 @@ class TelaDashboard
       table = TTY::Table.new(['Id', 'categoria', 'valor', 'data', 'usuario'], 
         lista_transacao.map{|u| [u["id"], u['nome_categoria'].to_s, u['valor'].to_i, u['data_transacao'], u['nome']]})
         puts table.render(:unicode)
-      somar_saldo(@id_usuario_logado)
-      somar_despesas(@id_usuario_logado)
+    somar_saldo_mes
+    somar_despesas_mes
+    somar_receita
+    somar_despesa
+    saldo_total
   end
 
   def self.adiciona_transacao
@@ -89,7 +105,15 @@ class TelaDashboard
             end
     end
     valor = prompt.ask("valor: ").to_f
-    data = prompt.ask("data: ")
+    data = prompt.select("data: ") do |menu|
+            hoje = Date.today
+            data_inicial = Date.new(hoje.year, hoje.month, 1)
+            data_final = Date.new(hoje.year, hoje.month, -1)
+            while data_inicial < data_final
+                menu.choice data_inicial
+                data_inicial+=1
+            end
+    end
     tipo = lista_categoria.find{|t| t["id"] == id_categoria}
     if tipo["tipo"] == "DESPESA"
         valor = -valor
@@ -97,8 +121,11 @@ class TelaDashboard
     @transacao_service = TransacoesServices.new
     @transacao_service.inserir_transacao(valor: valor, data: data, categoria_id: id_categoria, usuario_id: @id_usuario_logado)
     system("cls") || system("clear")
-    somar_saldo(@id_usuario_logado)
-    somar_despesas(@id_usuario_logado)
+    somar_saldo_mes
+    somar_despesas_mes
+    somar_receita
+    somar_despesa
+    saldo_total
     header(@nome)
     caixa_saldos
     menu
@@ -115,25 +142,49 @@ class TelaDashboard
     @categoria_service = CategoriaService.new
     @categoria_service.inserir_categoria(nome: nome_categoria, tipo: tipo_categoria)
     system("cls") || system("clear")
-    somar_saldo(@id_usuario_logado)
-    somar_despesas(@id_usuario_logado)
+    somar_saldo_mes
+    somar_despesas_mes
+    somar_receita
+    somar_despesa
+    saldo_total
     header(@nome)
     caixa_saldos
     menu
   end
 
-  def self.somar_saldo(usuario_id)
+  def self.somar_saldo_mes
+    hoje = Date.today
+    inicio_mes = Date.new(hoje.year, hoje.month, 1)
+    final_mes = Date.new(hoje.year, hoje.month, -1)
     @transacao_service = TransacoesServices.new
-    @saldo_total = @transacao_service.saldo_transacoes_usuario_id(usuario_id)
+    @saldo_total_mes = @transacao_service.saldo_receita_usuario_data(@id_usuario_logado, inicio_mes, final_mes)
   end
 
-  def self.somar_despesas(usuario_id)
+  def self.somar_despesas_mes
+    hoje = Date.today
+    inicio_mes = Date.new(hoje.year, hoje.month, 1)
+    final_mes = Date.new(hoje.year, hoje.month, -1)
     @transacao_service = TransacoesServices.new
-    @salto_despesa = @transacao_service.saldo_despesa_usuario_id(@id_usuario_logado)
+    @saldo_despesa_mes = @transacao_service.saldo_despesa_usuario_data(@id_usuario_logado, inicio_mes, final_mes)
   end
 
-  def self.sair
-        exit
+  def self.somar_despesa
+    @transacao_service = TransacoesServices.new
+    @saldo_despesa = @transacao_service.saldo_despesa_total(@id_usuario_logado) 
+  end
+
+  def self.somar_receita
+    @transacao_service = TransacoesServices.new
+    @saldo_receita = @transacao_service.saldo_receita_total(@id_usuario_logado) 
+  end
+
+  def self.saldo_total
+    @transacao_service = TransacoesServices.new
+    @saldo_total = @transacao_service.saldo_real(@id_usuario_logado)     
+  end
+
+  def self.voltar
+    TelaLogin.menu
   end
 
 end

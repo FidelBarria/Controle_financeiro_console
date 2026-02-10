@@ -1,4 +1,5 @@
 
+require 'date'
 class TransacoesServices
   def initialize
     @transacoes_repository = TransacoesRepository.new
@@ -18,13 +19,28 @@ class TransacoesServices
         @transacoes_repository.listar_transacoes(usuario_id)
   end
 
-  def saldo_transacoes_usuario_id(usuario_id)
-    listar_transacoes = @transacoes_repository.listar_transacoes(usuario_id) || []
-    listar_transacoes.map{|u| u["valor"].to_f}.select{|h| h.positive?}.sum
+  def saldo_receita_usuario_data(usuario_id, inicio_mes, final_mes)
+    listar_transacoes = @transacoes_repository.listar_transacoes_receita_data(usuario_id, inicio_mes, final_mes) || []
+    listar_transacoes.map{|u| u["valor"].to_f}.sum
   end
 
-  def saldo_despesa_usuario_id(usuario_id)
+  def saldo_despesa_usuario_data(usuario_id, inicio_mes, final_mes)
+    listar_transacoes = @transacoes_repository.listar_transacoes_despesa_data(usuario_id, inicio_mes, final_mes) || []
+    listar_transacoes.map{|u| u["valor"].to_f}.sum      
+  end
+
+  def saldo_receita_total(usuario_id)
+    listar_transacoes = @transacoes_repository.listar_transacoes_positivo(usuario_id) || []
+    listar_transacoes.map{|u| u["valor"].to_f}.sum    
+  end
+
+  def saldo_despesa_total(usuario_id)
+    listar_transacoes = @transacoes_repository.listar_transacoes_negativo(usuario_id) || []
+    listar_transacoes.map{|u| u["valor"].to_f}.sum    
+  end
+
+  def saldo_real(usuario_id)
     listar_transacoes = @transacoes_repository.listar_transacoes(usuario_id) || []
-    listar_transacoes.map{|u| u["valor"].to_f}.select{|h| h.negative?}.sum      
+    listar_transacoes.map{|u| u["valor"].to_f}.sum        
   end
 end
